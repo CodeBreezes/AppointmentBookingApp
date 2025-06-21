@@ -8,14 +8,16 @@ import {
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import styles from '../styles/HomeScreen.styles'; // 💡 External stylesheet
+import styles from '../styles/HomeScreen.styles'; 
+import BookingScreen from '../screens/BookingScreen'; 
+
 
 const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Image
-          source={require('../assets/rashid.png')} // 💡 Image must be in /assets
+          source={require('../assets/rashid.png')} 
           style={styles.profileImage}
           resizeMode="cover"
         />
@@ -45,7 +47,7 @@ const HomeScreen = ({ navigation }) => {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => navigation.navigate('Booking')}
+            onPress={() => navigation.navigate('BookingScreen')}
           >
             <Text style={styles.buttonText}>Book a session</Text>
           </TouchableOpacity>

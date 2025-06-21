@@ -14,7 +14,6 @@ const styles = StyleSheet.create({
 profileImage: {
   width: width,
   height: height * 0.5,
-  marginTop: height * 0.04, 
   borderBottomLeftRadius: 24, 
   borderBottomRightRadius: 24,
   overflow: 'hidden',
