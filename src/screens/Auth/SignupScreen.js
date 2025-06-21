@@ -5,12 +5,11 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  Platform,
   Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import styles from '../../styles/Auth/SignupScreen.styles';
-import axios from 'axios';
+import { registerCustomer } from '../../api/customerApi'; // 👈 import API
 
 const SignupScreen = () => {
   const navigation = useNavigation();
@@ -19,11 +18,6 @@ const SignupScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  const apiUrl =
-    Platform.OS === 'android'
-      ? 'http://appointment.bitprosofttech.com/api/Customers'
-      : 'http://appointment.bitprosofttech.com/api/Customers';
 
   const handleRegister = async () => {
     if (!firstName || !lastName || !phoneNumber || !email || !password) {
@@ -41,17 +35,15 @@ const SignupScreen = () => {
     };
 
     try {
-      const response = await axios.post(apiUrl, payload);
-debugger;
+      const response = await registerCustomer(payload);
       if (response.status === 201 || response.status === 200) {
         Alert.alert('Success', 'Registered successfully!');
-        navigation.navigate('Home'); 
+        navigation.navigate('Home');
       } else {
         Alert.alert('Error', 'Registration failed');
       }
     } catch (error) {
-      console.error('Signup error:', error.message);
-      Alert.alert('API Error', 'Could not connect to server');
+      Alert.alert('Error', 'Unable to register. Please try again.');
     }
   };
 
