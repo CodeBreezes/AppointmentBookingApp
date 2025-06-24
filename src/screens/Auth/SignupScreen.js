@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import styles from '../../styles/Auth/SignupScreen.styles';
-import { registerCustomer } from '../../api/customerApi'; // 👈 import API
+import { registerCustomer } from '../../api/customerApi';  
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignupScreen = () => {
   const navigation = useNavigation();
@@ -37,9 +38,13 @@ const SignupScreen = () => {
     try {
       const response = await registerCustomer(payload);
       if (response.status === 201 || response.status === 200) {
-        Alert.alert('Success', 'Registered successfully!');
+      const customer = response.data;  
+      await AsyncStorage.setItem('customerUniqueId', customer.uniqueId.toString());
+      await AsyncStorage.setItem('customerFullName', customer.fullName);
+        Alert.alert('Success', 'Booking submitted successfully!');
         navigation.navigate('Home');
-      } else {
+      }
+       else {
         Alert.alert('Error', 'Registration failed');
       }
     } catch (error) {

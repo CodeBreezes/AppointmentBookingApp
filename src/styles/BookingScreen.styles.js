@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
   pageContainer: {
     flexGrow: 1,
-    backgroundColor: '#fafafa', // light green
+    backgroundColor: '#fafafa',
     padding: 20,
   },
   customHeader: {
@@ -50,10 +50,27 @@ export default StyleSheet.create({
     backgroundColor: '#fff',
     marginBottom: 10,
     overflow: 'hidden',
+    height: 42,
+    justifyContent: 'center',
   },
   picker: {
-    height: 50,
+    height: 42,
     width: '100%',
+    color: '#333',
+    fontSize: 15,
+  },
+  dropdownTouchable: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  dropdownText: {
+    fontSize: 15,
     color: '#333',
   },
   dateButton: {
@@ -64,6 +81,7 @@ export default StyleSheet.create({
   },
   dateButtonText: {
     color: '#333',
+    fontSize: 15,
   },
   bookButton: {
     backgroundColor: '#7442ff',
@@ -75,5 +93,74 @@ export default StyleSheet.create({
   bookButtonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 16,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    width: '90%',
+    maxHeight: '80%',
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 20,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  serviceCard: {
+    backgroundColor: '#f1f1f1',
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 12,
+  },
+  serviceCard: {
+  backgroundColor: '#f1f1f1',
+  borderRadius: 10,
+  paddingVertical: 12,     // reduced from 16
+  paddingHorizontal: 14,
+  marginBottom: 8,         // reduced gap between boxes
+},
+
+serviceRow: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: 4,
+},
+
+serviceName: {
+  fontSize: 15,            // reduced from 16
+  fontWeight: '600',
+  color: '#333',
+},
+
+serviceCost: {
+  fontSize: 15,
+  fontWeight: '600',
+  color: '#28a745',
+},
+
+serviceDescription: {
+  fontSize: 13,
+  color: '#666',
+  marginTop: 2,
+},
+
+  modalClose: {
+    marginTop: 12,
+    alignSelf: 'center',
+    padding: 10,
+  },
+  modalCloseText: {
+    color: '#ff5252',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
