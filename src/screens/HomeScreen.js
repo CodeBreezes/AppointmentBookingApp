@@ -9,7 +9,6 @@ import {
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import styles from '../styles/HomeScreen.styles'; 
-import BookingScreen from '../screens/BookingScreen'; 
 
 
 const HomeScreen = ({ navigation }) => {
@@ -32,7 +31,7 @@ const HomeScreen = ({ navigation }) => {
             {[1, 2, 3, 4, 5].map((_, i) => (
               <FontAwesome key={i} name="star" size={18} color="#FFD700" />
             ))}
-            <Text style={styles.reviewText}> 15 reviews</Text>
+            <Text style={styles.reviewText}> 5 reviews</Text>
           </View>
 
           <Text style={styles.sectionTitle}>About</Text>
@@ -47,7 +46,7 @@ const HomeScreen = ({ navigation }) => {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => navigation.navigate('BookingScreen')}
+            onPress={() => navigation.navigate('Login')}
           >
             <Text style={styles.buttonText}>Book a session</Text>
           </TouchableOpacity>

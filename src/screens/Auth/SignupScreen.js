@@ -42,7 +42,7 @@ const SignupScreen = () => {
       await AsyncStorage.setItem('customerUniqueId', customer.uniqueId.toString());
       await AsyncStorage.setItem('customerFullName', customer.fullName);
         Alert.alert('Success', 'Booking submitted successfully!');
-        navigation.navigate('Home');
+        navigation.navigate('BookingScreen');
       }
        else {
         Alert.alert('Error', 'Registration failed');

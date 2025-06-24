@@ -20,7 +20,7 @@ const LoginScreen = () => {
       Alert.alert('Validation', 'Please enter both fields');
       return;
     }
-    navigation.replace('Home');
+    navigation.replace('BookingScreen');
   };
 
   return (
