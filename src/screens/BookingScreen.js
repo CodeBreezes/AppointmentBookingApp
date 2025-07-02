@@ -17,7 +17,7 @@ import { postBooking } from '../api/bookingApi';
 
 const BookingScreen = () => {
   const [name, setName] = useState('');
-  const [customerId, setCustomerId] = useState(null);
+  const [userId, setUserId] = useState(null);
   const [services, setServices] = useState([]);
   const [serviceId, setServiceId] = useState('');
   const [date, setDate] = useState(new Date());
@@ -29,45 +29,48 @@ const BookingScreen = () => {
   const serviceApiUrl = 'http://appointment.bitprosofttech.com/api/Services';
 
   useEffect(() => {
-    axios
-      .get(serviceApiUrl)
-      .then((response) => setServices(response.data.slice(0, 4)))
-      .catch(() => Alert.alert('Error', 'Unable to load services'));
+  axios
+    .get(serviceApiUrl)
+    .then((response) => setServices(response.data.slice(0, 4)))
+    .catch(() => Alert.alert('Error', 'Unable to load services'));
 
-    const fetchCustomerData = async () => {
-      const fullName = await AsyncStorage.getItem('customerFullName');
-      const id = await AsyncStorage.getItem('customerUniqueId');
-      if (fullName) setName(fullName);
-      if (id) setCustomerId(id);
-    };
+  const fetchUserData = async () => {
+    const fullName = await AsyncStorage.getItem('customerFullName');
+    const id = await AsyncStorage.getItem('userId');  
+    if (fullName) setName(fullName);
+    if (id) setUserId(id);
+  };
 
-    fetchCustomerData();
-  }, []);
+  fetchUserData();  
+}, []);
 
   const handleBooking = async () => {
-    if (!serviceId || !customerId) {
-      Alert.alert('Error', 'Please select a service.');
-      return;
-    }
+  if (!serviceId || !userId) {
+    Alert.alert('Error', 'Please select a service and ensure you are logged in.');
+    return;
+  }
 
-  const startedDate = date.toISOString().split('T')[0];  
-const startedTime = time.toTimeString().split(' ')[0];              
+  // Format date and time according to backend expectations
+  const startedDate = date.toISOString().split('T')[0]; // YYYY-MM-DD
+  const startedTime = time.toTimeString().split(' ')[0]; // HH:mm:ss
 
-    const payload = {
-      serviceId: serviceId,
-      customerId: parseInt(customerId),
-      startedDate: startedDate,
-      startedTime: startedTime,
-    };
-
-    try {
-      await postBooking(payload);
-      Alert.alert('Success', 'Booking submitted successfully!');
-    } catch (error) {
-      console.error('Booking Error:', error.response?.data || error.message);
-      Alert.alert('Error', 'Booking failed. Check console for details.');
-    }
+  const payload = {
+    serviceId: serviceId,
+    userId: parseInt(userId),
+    startedDate: startedDate,
+    startedTime: startedTime,
   };
+
+  try {
+    const response = await postBooking(payload);
+    console.log('Booking Success:', response.data);
+    Alert.alert('Success', 'Booking submitted successfully!');
+  } catch (error) {
+    console.error('Booking Error:', error.response?.data || error.message);
+    Alert.alert('Error', 'Booking failed. Please try again.');
+  }
+};
+
 
   return (
     <ScrollView contentContainerStyle={styles.pageContainer}>

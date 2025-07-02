@@ -34,16 +34,23 @@ const LoginScreen = () => {
 
     const response = await loginUser(payload);
 
-    if (response?.status === 200 && response?.data?.token) {
-      await AsyncStorage.setItem('authToken', response.data.token);
+    if (response?.status === 200 && response?.data?.isLoginSuccess && response?.data?.token) {
+      const { token, fName, lName, email, userId } = response.data;
+
+      // Save to AsyncStorage
+      await AsyncStorage.setItem('authToken', token);
+      await AsyncStorage.setItem('userId', userId.toString());
+      await AsyncStorage.setItem('customerFullName', `${fName} ${lName}`);
+      await AsyncStorage.setItem('email', email);
+
       showModal('Login Success', 'You are now logged in!', () =>
         navigation.replace('BookingScreen')
       );
     } else {
-      showModal('Login Failed', response?.data?.errorMessage || 'Invalid credentials.');
+      showModal('Login Failed', response?.data?.errorMessages || 'Invalid login response.');
     }
   } catch (error) {
-    const message = error?.response?.data?.errorMessage || 'Server error. Please try again.';
+    const message = error?.response?.data?.errorMessages || 'Server error. Please try again.';
     showModal('Login Error', message);
   }
 };
