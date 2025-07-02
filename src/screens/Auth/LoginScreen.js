@@ -5,33 +5,69 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  Alert,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import styles from '../../styles/Auth/LoginScreen.styles';
+import { useNavigation } from '@react-navigation/native';
+import { loginUser } from '../../api/loginApi';  
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomAlertModal from '../../components/CustomAlertModal';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalContent, setModalContent] = useState({ title: '', message: '', onConfirm: null });
 
-  const handleLogin = () => {
-    if (!username || !password) {
-      Alert.alert('Validation', 'Please enter both fields');
-      return;
+  const handleLogin = async () => {
+  if (!username || !password) {
+    showModal('Validation Error', 'Please enter both username and password.');
+    return;
+  }
+
+  try {
+    const payload = {
+      loginName: username,
+      password,
+    };
+
+    const response = await loginUser(payload);
+
+    if (response?.status === 200 && response?.data?.token) {
+      await AsyncStorage.setItem('authToken', response.data.token);
+      showModal('Login Success', 'You are now logged in!', () =>
+        navigation.replace('BookingScreen')
+      );
+    } else {
+      showModal('Login Failed', response?.data?.errorMessage || 'Invalid credentials.');
     }
-    navigation.replace('BookingScreen');
+  } catch (error) {
+    const message = error?.response?.data?.errorMessage || 'Server error. Please try again.';
+    showModal('Login Error', message);
+  }
+};
+
+
+  const showModal = (title, message, onConfirm) => {
+    setModalContent({
+      title,
+      message,
+      onConfirm: () => {
+        setModalVisible(false);
+        if (onConfirm) onConfirm();
+      },
+    });
+    setModalVisible(true);
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      
-
       <Text style={styles.title}>Log In</Text>
 
       <View style={styles.inputContainer}>
         <TextInput
-          placeholder="Username (Mobile number)"
+          placeholder="Username or Mobile"
           placeholderTextColor="#999"
           style={styles.input}
           value={username}
@@ -61,6 +97,14 @@ const LoginScreen = () => {
           <Text style={styles.registerLink}>Register</Text>
         </TouchableOpacity>
       </View>
+
+      <CustomAlertModal
+        visible={modalVisible}
+        title={modalContent.title}
+        message={modalContent.message}
+        onClose={() => setModalVisible(false)}
+        onConfirm={modalContent.onConfirm}
+      />
     </SafeAreaView>
   );
 };
