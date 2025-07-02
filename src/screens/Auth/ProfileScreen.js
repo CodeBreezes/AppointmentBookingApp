@@ -8,7 +8,8 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import styles from '../../styles/Auth/ProfileScreen.styles';
 import { registerUser } from '../../api/userApi';
 import { useNavigation } from '@react-navigation/native';
-import CustomAlertModal from '../../components/CustomAlertModal'; // Reusable modal
+import CustomAlertModal from '../../components/CustomAlertModal';  
+import CustomHeader from '../../components/CustomHeader';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -102,6 +103,7 @@ const ProfileScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+       <CustomHeader title="Signup" />
       <StatusBar barStyle="light-content" backgroundColor="#6A5ACD" />
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.header}>
