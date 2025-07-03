@@ -22,7 +22,7 @@ const CustomHeader = ({ title }) => {
 const styles = StyleSheet.create({
   headerContainer: {
     height: 55,
-    backgroundColor: '#7442ff',
+    backgroundColor: '#6A5ACD',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

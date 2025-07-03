@@ -1,33 +1,50 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
+  // Page container below header
   pageContainer: {
     flexGrow: 1,
-    backgroundColor: '#fafafa',
-    padding: 20,
+    backgroundColor: '#f0f0f5', // Soft gray for background
+    padding: 16,
+    paddingTop: 10, // Ensure content starts below header
   },
-  customHeader: {
-    backgroundColor: '#28a745',
-    paddingVertical: 20,
+
+  // Header (shared style with login/profile)
+  headerContainer: {
+    height: 55,
+    backgroundColor: '#7442ff',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
-    borderRadius: 10,
-    marginBottom: 20,
   },
   headerTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
     color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
     textAlign: 'center',
+    flex: 1,
   },
+  menuIcon: {
+    width: 24,
+    height: 24,
+    tintColor: '#fff',
+  },
+  headerSpacer: {
+    width: 24, // For balance (if no right icon)
+  },
+
   card: {
     backgroundColor: '#fff',
     padding: 20,
     borderRadius: 12,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 4,
+    marginTop: 16,
   },
+
   label: {
     fontSize: 14,
     fontWeight: '600',
@@ -35,6 +52,7 @@ export default StyleSheet.create({
     marginBottom: 6,
     marginTop: 10,
   },
+
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
@@ -43,22 +61,7 @@ export default StyleSheet.create({
     marginBottom: 10,
     backgroundColor: '#f9f9f9',
   },
-  dropdownContainer: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    backgroundColor: '#fff',
-    marginBottom: 10,
-    overflow: 'hidden',
-    height: 42,
-    justifyContent: 'center',
-  },
-  picker: {
-    height: 42,
-    width: '100%',
-    color: '#333',
-    fontSize: 15,
-  },
+
   dropdownTouchable: {
     backgroundColor: '#fff',
     borderWidth: 1,
@@ -73,6 +76,7 @@ export default StyleSheet.create({
     fontSize: 15,
     color: '#333',
   },
+
   dateButton: {
     backgroundColor: '#eee',
     padding: 14,
@@ -83,6 +87,7 @@ export default StyleSheet.create({
     color: '#333',
     fontSize: 15,
   },
+
   bookButton: {
     backgroundColor: '#7442ff',
     padding: 16,
@@ -95,6 +100,7 @@ export default StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
+
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
@@ -114,44 +120,35 @@ export default StyleSheet.create({
     marginBottom: 16,
     textAlign: 'center',
   },
+
   serviceCard: {
     backgroundColor: '#f1f1f1',
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 12,
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    marginBottom: 8,
   },
-  serviceCard: {
-  backgroundColor: '#f1f1f1',
-  borderRadius: 10,
-  paddingVertical: 12,     // reduced from 16
-  paddingHorizontal: 14,
-  marginBottom: 8,         // reduced gap between boxes
-},
-
-serviceRow: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: 4,
-},
-
-serviceName: {
-  fontSize: 15,            // reduced from 16
-  fontWeight: '600',
-  color: '#333',
-},
-
-serviceCost: {
-  fontSize: 15,
-  fontWeight: '600',
-  color: '#28a745',
-},
-
-serviceDescription: {
-  fontSize: 13,
-  color: '#666',
-  marginTop: 2,
-},
+  serviceRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  serviceName: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#333',
+  },
+  serviceCost: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#28a745',
+  },
+  serviceDescription: {
+    fontSize: 13,
+    color: '#666',
+    marginTop: 2,
+  },
 
   modalClose: {
     marginTop: 12,

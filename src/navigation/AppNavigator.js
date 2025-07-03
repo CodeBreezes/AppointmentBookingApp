@@ -17,17 +17,7 @@ const AppNavigator = () => {
         <Stack.Screen name="Signup" component={SignupScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="BookingScreen" component={BookingScreen} options={{title: 'Book Your Appointment', 
-    headerStyle: {
-      backgroundColor: '#7442ff',   
-    },
-    headerTintColor: '#fff',       
-    headerTitleStyle: {
-      fontWeight: 'bold',
-    },
-
-  }}
-/>
+        <Stack.Screen name="BookingScreen" component={BookingScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
