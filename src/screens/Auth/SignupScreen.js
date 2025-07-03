@@ -8,17 +8,22 @@ import {
   Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import styles from '../../styles/Auth/SignupScreen.styles';
-import { registerCustomer } from '../../api/customerApi';  
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import styles from '../../styles/Auth/SignupScreen.styles';
+import { registerCustomer } from '../../api/customerApi';
+import CustomHeader from '../../components/CustomHeader'; // Your header with menu button
+import CustomDrawer from '../../components/CustomDrawer'; // Sidebar drawer
 
 const SignupScreen = () => {
   const navigation = useNavigation();
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [drawerVisible, setDrawerVisible] = useState(false);
 
   const handleRegister = async () => {
     if (!firstName || !lastName || !phoneNumber || !email || !password) {
@@ -38,13 +43,13 @@ const SignupScreen = () => {
     try {
       const response = await registerCustomer(payload);
       if (response.status === 201 || response.status === 200) {
-      const customer = response.data;  
-      await AsyncStorage.setItem('customerUniqueId', customer.uniqueId.toString());
-      await AsyncStorage.setItem('customerFullName', customer.fullName);
+        const customer = response.data;
+        await AsyncStorage.setItem('customerUniqueId', customer.uniqueId.toString());
+        await AsyncStorage.setItem('customerFullName', customer.fullName);
+
         Alert.alert('Success', 'Booking submitted successfully!');
         navigation.navigate('BookingScreen');
-      }
-       else {
+      } else {
         Alert.alert('Error', 'Registration failed');
       }
     } catch (error) {
@@ -54,9 +59,11 @@ const SignupScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Text style={styles.backButtonText}>{'<'}</Text>
-      </TouchableOpacity>
+      {/* Top custom header with menu */}
+      <CustomHeader title="Signup" onMenuPress={() => setDrawerVisible(true)} />
+
+      {/* Side drawer */}
+      <CustomDrawer visible={drawerVisible} onClose={() => setDrawerVisible(false)} />
 
       <Text style={styles.title}>Create Account</Text>
 

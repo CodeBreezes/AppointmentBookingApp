@@ -1,20 +1,18 @@
+// components/CustomHeader.js
 import React from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 
-const CustomHeader = ({ title }) => {
-  const navigation = useNavigation();
-
+const CustomHeader = ({ title, onMenuPress }) => {
   return (
     <View style={styles.headerContainer}>
-      <TouchableOpacity onPress={() => navigation.openDrawer()}>
+      <TouchableOpacity onPress={onMenuPress}>
         <Image
-          source={require('../assets/menu.png')} // ☰ icon
+          source={require('../assets/menu.png')} // 🧠 Make sure you have this icon
           style={styles.menuIcon}
         />
       </TouchableOpacity>
       <Text style={styles.headerTitle}>{title}</Text>
-      <View style={{ width: 25 }} /> 
+      <View style={{ width: 25 }} />
     </View>
   );
 };
