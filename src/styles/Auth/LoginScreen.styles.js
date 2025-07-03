@@ -4,27 +4,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingHorizontal: 24,
-    justifyContent: 'center',
-  },
-  backButton: {
-    position: 'absolute',
-    top: 50,
-    left: 20,
-  },
-  backButtonText: {
-    fontSize: 24,
-    color: 'black',
-  },
-  title: {
-    textAlign: 'center',
-    fontSize: 24,
-    fontWeight: '600',
-    marginBottom: 40,
-    color: '#000',
   },
   inputContainer: {
     gap: 16,
+    marginTop: 30,
   },
   input: {
     backgroundColor: '#f2f2f2',
@@ -48,6 +31,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     alignItems: 'center',
     marginTop: 30,
+    elevation: 2, // adds shadow for Android
   },
   loginButtonText: {
     color: '#fff',

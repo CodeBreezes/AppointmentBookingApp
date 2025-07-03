@@ -9,12 +9,12 @@ const CustomHeader = ({ title }) => {
     <View style={styles.headerContainer}>
       <TouchableOpacity onPress={() => navigation.openDrawer()}>
         <Image
-          source={require('../assets/icons/menu.png')} // ☰ icon
+          source={require('../assets/menu.png')} // ☰ icon
           style={styles.menuIcon}
         />
       </TouchableOpacity>
       <Text style={styles.headerTitle}>{title}</Text>
-      <View style={{ width: 25 }} /> {/* Empty space to balance layout */}
+      <View style={{ width: 25 }} /> 
     </View>
   );
 };
