@@ -1,21 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  Modal,
-  FlatList,
-  Alert,
-  Platform,
-  SafeAreaView,
+  View, Text, TouchableOpacity, ScrollView, Modal,
+  FlatList, Alert, Platform, SafeAreaView
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import axios from 'axios';
-import styles from '../styles/BookingScreen.styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { postBooking } from '../api/bookingApi';
-import CustomHeader from '../components/CustomHeader'; // ✅ Add this
+import axios from 'axios';
+import MainLayout from '../components/MainLayout';
+import styles from '../styles/BookingScreen.styles';
 
 const BookingScreen = () => {
   const [name, setName] = useState('');
@@ -63,7 +56,7 @@ const BookingScreen = () => {
     };
 
     try {
-      const response = await postBooking(payload);
+      await postBooking(payload);
       Alert.alert('Success', 'Booking submitted successfully!');
     } catch (error) {
       Alert.alert('Error', 'Booking failed. Please try again.');
@@ -71,9 +64,7 @@ const BookingScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#f0f0f5' }}>
-      <CustomHeader title="Book Appointment" /> 
-
+    <MainLayout title="Book Appointment">
       <ScrollView contentContainerStyle={styles.pageContainer}>
         <View style={styles.card}>
           <Text style={styles.label}>Welcome, {name}</Text>
@@ -90,7 +81,8 @@ const BookingScreen = () => {
             </Text>
           </TouchableOpacity>
 
-          <Modal visible={serviceModalVisible} animationType="slide" transparent={true}>
+          {/* Service Modal */}
+          <Modal visible={serviceModalVisible} animationType="slide" transparent>
             <View style={styles.modalOverlay}>
               <View style={styles.modalContent}>
                 <Text style={styles.modalTitle}>Select a Service</Text>
@@ -160,7 +152,7 @@ const BookingScreen = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </MainLayout>
   );
 };
 

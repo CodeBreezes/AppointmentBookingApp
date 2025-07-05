@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,10 +8,28 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
 const CustomDrawer = ({ visible, onClose }) => {
+  const [fullName, setFullName] = useState('Guest');
+  const navigation = useNavigation(); // ✅ This gives you the navigation object
+
+  useEffect(() => {
+    const fetchName = async () => {
+      try {
+        const name = await AsyncStorage.getItem('customerFullName');
+        if (name) setFullName(name);
+      } catch (error) {
+        console.warn('Failed to load name', error);
+      }
+    };
+
+    fetchName();
+  }, []);
+
   if (!visible) return null;
 
   return (
@@ -21,24 +39,23 @@ const CustomDrawer = ({ visible, onClose }) => {
 
         <View style={styles.profileContainer}>
           <Image
-            source={require('../assets/rashid.png')} // 👤 Your avatar image
+            source={require('../assets/rashid.png')}
             style={styles.avatar}
           />
-          <Text style={styles.name}>LanreB</Text>
+          <Text style={styles.name}>{fullName}</Text>
           <Text style={styles.subtitle}>70 Events</Text>
         </View>
 
         <ScrollView style={styles.menuContainer} showsVerticalScrollIndicator={false}>
-          <DrawerItem icon="🏠" label="Home" />
-          <DrawerItem icon="🔍" label="Explore" />
-          <DrawerItem icon="🗓️" label="My Events" />
-          <DrawerItem icon="📝" label="Tasks" />
-          <DrawerItem icon="📨" label="Invite Friends" />
-          <DrawerItem icon="⚙️" label="Settings" />
-          <DrawerItem icon="ℹ️" label="About" />
+          <DrawerItem icon="🏠" label="Dashboard" onPress={() => { navigation.navigate('Dashboard'); onClose(); }} />
+
+          <DrawerItem icon="🔍" label="History" onPress={() => {}} />
+          <DrawerItem icon="📝" label="Change Password" onPress={() => {}} />
+          <DrawerItem icon="⚙️" label="Settings" onPress={() => {}} />
+          <DrawerItem icon="ℹ️" label="About" onPress={() => {}} />
         </ScrollView>
 
-        <TouchableOpacity style={styles.logoutContainer}>
+        <TouchableOpacity style={styles.logoutContainer} onPress={() => {/* Add logout logic here */}}>
           <Text style={styles.logoutText}>↩️ Sign Out</Text>
         </TouchableOpacity>
       </View>
@@ -46,8 +63,8 @@ const CustomDrawer = ({ visible, onClose }) => {
   );
 };
 
-const DrawerItem = ({ icon, label }) => (
-  <TouchableOpacity style={styles.menuItem}>
+const DrawerItem = ({ icon, label, onPress }) => (
+  <TouchableOpacity style={styles.menuItem} onPress={onPress}>
     <Text style={styles.icon}>{icon}</Text>
     <Text style={styles.label}>{label}</Text>
   </TouchableOpacity>
@@ -56,7 +73,7 @@ const DrawerItem = ({ icon, label }) => (
 const styles = StyleSheet.create({
   overlay: {
     position: 'absolute',
-    top: 55, // ➤ Keep below your header
+    top: 55,
     left: 0,
     width,
     height: height - 55,

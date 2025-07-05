@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, Image,
-  SafeAreaView, StatusBar, ScrollView
+  StatusBar, ScrollView
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { launchImageLibrary } from 'react-native-image-picker';
 import styles from '../../styles/Auth/ProfileScreen.styles';
 import { registerUser } from '../../api/userApi';
 import { useNavigation } from '@react-navigation/native';
-import CustomAlertModal from '../../components/CustomAlertModal';  
-import CustomHeader from '../../components/CustomHeader';
+import CustomAlertModal from '../../components/CustomAlertModal';
+import MainLayout from '../../components/MainLayout'; // ✅ Replaced CustomHeader
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -102,8 +102,7 @@ const ProfileScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-       <CustomHeader title="Signup" />
+    <MainLayout title="Signup">
       <StatusBar barStyle="light-content" backgroundColor="#6A5ACD" />
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.header}>
@@ -138,7 +137,7 @@ const ProfileScreen = () => {
         onClose={() => setModalVisible(false)}
         onConfirm={modalContent.onConfirm}
       />
-    </SafeAreaView>
+    </MainLayout>
   );
 };
 

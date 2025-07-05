@@ -1,4 +1,3 @@
-// components/CustomHeader.js
 import React from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 
@@ -7,7 +6,7 @@ const CustomHeader = ({ title, onMenuPress }) => {
     <View style={styles.headerContainer}>
       <TouchableOpacity onPress={onMenuPress}>
         <Image
-          source={require('../assets/menu.png')} // 🧠 Make sure you have this icon
+          source={require('../assets/menu.png')} // Make sure this image exists
           style={styles.menuIcon}
         />
       </TouchableOpacity>

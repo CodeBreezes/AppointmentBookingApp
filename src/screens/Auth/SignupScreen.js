@@ -1,19 +1,17 @@
 import React, { useState } from 'react';
 import {
-  SafeAreaView,
-  Text,
   View,
+  Text,
   TextInput,
   TouchableOpacity,
   Alert,
+  StyleSheet,
+  ScrollView,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-import styles from '../../styles/Auth/SignupScreen.styles';
+import { useNavigation } from '@react-navigation/native';
+import MainLayout from '../../components/MainLayout';
 import { registerCustomer } from '../../api/customerApi';
-import CustomHeader from '../../components/CustomHeader'; // Your header with menu button
-import CustomDrawer from '../../components/CustomDrawer'; // Sidebar drawer
 
 const SignupScreen = () => {
   const navigation = useNavigation();
@@ -23,7 +21,6 @@ const SignupScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [drawerVisible, setDrawerVisible] = useState(false);
 
   const handleRegister = async () => {
     if (!firstName || !lastName || !phoneNumber || !email || !password) {
@@ -46,9 +43,8 @@ const SignupScreen = () => {
         const customer = response.data;
         await AsyncStorage.setItem('customerUniqueId', customer.uniqueId.toString());
         await AsyncStorage.setItem('customerFullName', customer.fullName);
-
-        Alert.alert('Success', 'Booking submitted successfully!');
-        navigation.navigate('BookingScreen');
+        Alert.alert('Success', 'Registration successful!');
+        navigation.navigate('Dashboard');
       } else {
         Alert.alert('Error', 'Registration failed');
       }
@@ -58,68 +54,84 @@ const SignupScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Top custom header with menu */}
-      <CustomHeader title="Signup" onMenuPress={() => setDrawerVisible(true)} />
-
-      {/* Side drawer */}
-      <CustomDrawer visible={drawerVisible} onClose={() => setDrawerVisible(false)} />
-
-      <Text style={styles.title}>Create Account</Text>
-
-      <View style={styles.inputContainer}>
-        <TextInput
-          placeholder="First Name"
-          placeholderTextColor="#aaa"
-          style={styles.inputBox}
-          value={firstName}
-          onChangeText={setFirstName}
-        />
-        <TextInput
-          placeholder="Last Name"
-          placeholderTextColor="#aaa"
-          style={styles.inputBox}
-          value={lastName}
-          onChangeText={setLastName}
-        />
-        <TextInput
-          placeholder="Phone Number"
-          placeholderTextColor="#aaa"
-          keyboardType="phone-pad"
-          style={styles.inputBox}
-          value={phoneNumber}
-          onChangeText={setPhoneNumber}
-        />
-        <TextInput
-          placeholder="Email"
-          placeholderTextColor="#aaa"
-          keyboardType="email-address"
-          style={styles.inputBox}
-          value={email}
-          onChangeText={setEmail}
-        />
-        <TextInput
-          placeholder="Password"
-          placeholderTextColor="#aaa"
-          secureTextEntry
-          style={styles.inputBox}
-          value={password}
-          onChangeText={setPassword}
-        />
-      </View>
-
-      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-        <Text style={styles.registerButtonText}>Sign Up</Text>
-      </TouchableOpacity>
-
-      <View style={styles.loginContainer}>
-        <Text style={styles.loginText}>Already have an account?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-          <Text style={styles.loginLink}> Login</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+    <MainLayout title="Signup">
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.form}>
+          <TextInput
+            placeholder="First Name"
+            style={styles.input}
+            onChangeText={setFirstName}
+            value={firstName}
+          />
+          <TextInput
+            placeholder="Last Name"
+            style={styles.input}
+            onChangeText={setLastName}
+            value={lastName}
+          />
+          <TextInput
+            placeholder="Phone Number"
+            style={styles.input}
+            onChangeText={setPhoneNumber}
+            value={phoneNumber}
+            keyboardType="phone-pad"
+          />
+          <TextInput
+            placeholder="Email"
+            style={styles.input}
+            onChangeText={setEmail}
+            value={email}
+            keyboardType="email-address"
+          />
+          <TextInput
+            placeholder="Password"
+            style={styles.input}
+            onChangeText={setPassword}
+            value={password}
+            secureTextEntry
+          />
+          <TouchableOpacity style={styles.button} onPress={handleRegister}>
+            <Text style={styles.buttonText}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </MainLayout>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+    backgroundColor: '#F8F8F8',
+  },
+  form: {
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  input: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+  button: {
+    backgroundColor: '#6A5ACD',
+    padding: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+});
 
 export default SignupScreen;
