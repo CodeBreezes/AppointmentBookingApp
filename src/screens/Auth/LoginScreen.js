@@ -52,7 +52,7 @@ const LoginScreen = () => {
         await AsyncStorage.setItem('email', email);
 
         showModal('Login Success', 'You are now logged in!', () =>
-          navigation.replace('BookingScreen')
+          navigation.replace('Dashboard')
         );
       } else {
         showModal(

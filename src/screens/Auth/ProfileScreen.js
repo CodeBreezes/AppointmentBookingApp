@@ -1,15 +1,24 @@
 import React, { useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, Image,
-  StatusBar, ScrollView
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  StatusBar,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { launchImageLibrary } from 'react-native-image-picker';
 import styles from '../../styles/Auth/ProfileScreen.styles';
 import { registerUser } from '../../api/userApi';
+import { loginUser } from '../../api/loginApi'; // ✅ Correct login import
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import CustomAlertModal from '../../components/CustomAlertModal';
-import MainLayout from '../../components/MainLayout'; // ✅ Replaced CustomHeader
+import MainLayout from '../../components/MainLayout';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -82,16 +91,36 @@ const ProfileScreen = () => {
 
     try {
       const response = await registerUser(payload);
+
       if (response.status === 200 || response.status === 201) {
-        showModal(
-          '🎉 Registration Successful',
-          'Your account has been created successfully.',
-          'Book Now',
-          () => {
-            setModalVisible(false);
-            navigation.replace('BookingScreen');
-          }
-        );
+        // ✅ Auto-login after successful signup
+        const loginPayload = { loginName: email, password };
+        const loginResponse = await loginUser(loginPayload);
+
+        if (
+          loginResponse.status === 200 &&
+          loginResponse.data?.isLoginSuccess &&
+          loginResponse.data?.token
+        ) {
+          const user = loginResponse.data;
+
+          await AsyncStorage.setItem('token', user.token);
+          await AsyncStorage.setItem('userId', user.userId.toString());
+          await AsyncStorage.setItem('customerFullName', `${user.fName} ${user.lName}`);
+          await AsyncStorage.setItem('email', user.email);
+
+          showModal(
+            '🎉 Registration Successful',
+            'You are now logged in!',
+            'Go to Dashboard',
+            () => {
+              setModalVisible(false);
+              navigation.replace('Dashboard');
+            }
+          );
+        } else {
+          showModal('⚠️ Login Failed', loginResponse?.data?.errorMessages || 'Could not log in after signup.');
+        }
       } else {
         showModal('⚠️ Registration Failed', response?.data?.errorMessage || 'Unexpected error.');
       }
@@ -104,30 +133,62 @@ const ProfileScreen = () => {
   return (
     <MainLayout title="Signup">
       <StatusBar barStyle="light-content" backgroundColor="#6A5ACD" />
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity style={styles.profileImageContainer} onPress={handleImageUpload}>
-            {profileImageUri
-              ? <Image source={{ uri: profileImageUri }} style={styles.profileImage} />
-              : <AntDesign name="user" size={60} color="white" />}
-          </TouchableOpacity>
-          <Text style={styles.profilePictureText}>Profile Picture</Text>
-          <Text style={styles.uploadImageText}>Upload a personal image</Text>
-        </View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={100}
+      >
+        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+          <View style={styles.header}>
+            <TouchableOpacity style={styles.profileImageContainer} onPress={handleImageUpload}>
+              {profileImageUri ? (
+                <Image source={{ uri: profileImageUri }} style={styles.profileImage} />
+              ) : (
+                <AntDesign name="user" size={60} color="white" />
+              )}
+            </TouchableOpacity>
+            <Text style={styles.profilePictureText}>Profile Picture</Text>
+            <Text style={styles.uploadImageText}>Upload a personal image</Text>
+          </View>
 
-        <View style={styles.formContainer}>
-          <TextInput style={styles.input} placeholder="First Name" value={firstName} onChangeText={setFirstName} />
-          <TextInput style={styles.input} placeholder="Last Name" value={lastLame} onChangeText={setLastLame} />
-          <TextInput style={styles.input} placeholder="Phone Number" value={phoneNumber} onChangeText={setPhoneNumber} keyboardType="phone-pad" />
-          <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" />
-          <TextInput style={styles.input} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry />
-          <TextInput style={styles.input} placeholder="Confirm Password" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry />
+          <View style={styles.formContainer}>
+            <TextInput style={styles.input} placeholder="First Name" value={firstName} onChangeText={setFirstName} />
+            <TextInput style={styles.input} placeholder="Last Name" value={lastLame} onChangeText={setLastLame} />
+            <TextInput
+              style={styles.input}
+              placeholder="Phone Number"
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
+              keyboardType="phone-pad"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              secureTextEntry
+            />
 
-          <TouchableOpacity style={styles.signUpButton} onPress={handleSubmit}>
-            <Text style={styles.signUpButtonText}>Sign Up</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+            <TouchableOpacity style={styles.signUpButton} onPress={handleSubmit}>
+              <Text style={styles.signUpButtonText}>Sign Up</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       <CustomAlertModal
         visible={modalVisible}
