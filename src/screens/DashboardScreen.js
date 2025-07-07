@@ -1,77 +1,82 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  ScrollView
+} from 'react-native';
 import MainLayout from '../components/MainLayout';
-
-const dummyData = [
-  { id: '1', title: 'Upcoming Appointment', description: 'Hair Spa - 5th July, 11:00 AM' },
-  { id: '2', title: 'Recent Booking', description: 'Facial Cleanup - 28th June, 3:00 PM' },
-  { id: '3', title: 'Offer', description: 'Get 20% off on next visit!' },
-];
+import { useNavigation } from '@react-navigation/native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const DashboardScreen = () => {
-  const renderItem = ({ item }) => (
-    <View style={styles.card}>
-      <Text style={styles.cardTitle}>{item.title}</Text>
-      <Text style={styles.cardDescription}>{item.description}</Text>
-    </View>
-  );
+  const navigation = useNavigation();
 
   return (
     <MainLayout title="Dashboard">
-      <Text style={styles.welcome}>Welcome Back!</Text>
-      <Image
-        source={require('../assets/History.png')}
-        style={styles.banner}
-      />
-      <FlatList
-        data={dummyData}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-      />
+      <ScrollView contentContainerStyle={styles.container}>
+        <TouchableOpacity
+          style={styles.box}
+          onPress={() => navigation.navigate('MyBookings')}
+        >
+          <AntDesign name="calendar" size={30} color="#7442FF" />
+          <Text style={styles.boxTitle}>My Bookings</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.box}
+          onPress={() => navigation.navigate('Profile')}
+        >
+          <AntDesign name="user" size={30} color="#7442FF" />
+          <Text style={styles.boxTitle}>Profile</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.box}>
+          <MaterialIcons name="build" size={30} color="#7442FF" />
+          <Text style={styles.boxTitle}>Service Center</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.box}>
+          <AntDesign name="infocirlceo" size={30} color="#7442FF" />
+          <Text style={styles.boxTitle}>Help & Info</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </MainLayout>
   );
 };
 
+const boxSize = Dimensions.get('window').width / 2 - 30;
+
 const styles = StyleSheet.create({
-  welcome: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginHorizontal: 20,
-    marginTop: 16,
-    color: '#333',
+  container: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    paddingVertical: 20,
+    paddingBottom: 40,
   },
-  banner: {
-    height: 140,
-    width: '90%',
-    alignSelf: 'center',
-    resizeMode: 'contain',
-    marginVertical: 10,
-  },
-  listContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 20,
-  },
-  card: {
+  box: {
+    width: boxSize,
+    height: boxSize,
     backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
+    borderRadius: 20,
+    marginVertical: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#999',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
     shadowRadius: 4,
   },
-  cardTitle: {
+  boxTitle: {
+    marginTop: 10,
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#4A4A4A',
-  },
-  cardDescription: {
-    fontSize: 14,
-    color: '#777',
-    marginTop: 4,
+    fontWeight: '600',
+    color: '#333',
   },
 });
 
