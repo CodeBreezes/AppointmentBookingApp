@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  ActivityIndicator,
+  Dimensions,
+} from 'react-native';
 import MainLayout from '../components/MainLayout';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const SERVICE_NAMES = {
   1: 'Oil Change',
@@ -26,7 +35,9 @@ const MyBookingsScreen = () => {
         },
       });
 
-      const filtered = response.data.filter((booking) => booking.userId.toString() === userId);
+      const filtered = response.data.filter(
+        (booking) => booking.userId.toString() === userId
+      );
       setBookings(filtered);
     } catch (error) {
       console.error('Failed to fetch bookings:', error);
@@ -40,8 +51,12 @@ const MyBookingsScreen = () => {
   }, []);
 
   const formatDate = (dateStr) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateStr).toLocaleDateString('en-US', options);
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
   };
 
   const formatTime = (timeStr) => {
@@ -57,9 +72,21 @@ const MyBookingsScreen = () => {
 
   const renderBooking = ({ item }) => (
     <View style={styles.card}>
-      <Text style={styles.text}>🛠️ Service: {SERVICE_NAMES[item.serviceId] || 'Unknown Service'}</Text>
-      <Text style={styles.text}>📅 Date: {formatDate(item.startedDate)}</Text>
-      <Text style={styles.text}>⏰ Time: {formatTime(item.startedTime)}</Text>
+      <View style={styles.row}>
+        <FontAwesome5 name="wrench" size={18} color="#7442FF" />
+        <Text style={styles.label}>Service:</Text>
+        <Text style={styles.value}>{SERVICE_NAMES[item.serviceId] || 'N/A'}</Text>
+      </View>
+      <View style={styles.row}>
+        <MaterialIcons name="date-range" size={20} color="#7442FF" />
+        <Text style={styles.label}>Date:</Text>
+        <Text style={styles.value}>{formatDate(item.startedDate)}</Text>
+      </View>
+      <View style={styles.row}>
+        <FontAwesome5 name="clock" size={18} color="#7442FF" />
+        <Text style={styles.label}>Time:</Text>
+        <Text style={styles.value}>{formatTime(item.startedTime)}</Text>
+      </View>
     </View>
   );
 
@@ -72,31 +99,59 @@ const MyBookingsScreen = () => {
           data={bookings}
           keyExtractor={(item) => item.uniqueId.toString()}
           renderItem={renderBooking}
-          contentContainerStyle={{ padding: 16 }}
+          contentContainerStyle={styles.list}
         />
       ) : (
-        <Text style={styles.noDataText}>No bookings found.</Text>
+        <View style={styles.noDataContainer}>
+          <FontAwesome5 name="calendar-times" size={40} color="#bbb" />
+          <Text style={styles.noDataText}>You have no bookings yet.</Text>
+        </View>
       )}
     </MainLayout>
   );
 };
 
+const { width } = Dimensions.get('window');
+
 const styles = StyleSheet.create({
+  list: {
+    padding: 16,
+  },
   card: {
     backgroundColor: '#fff',
+    borderRadius: 16,
     padding: 16,
-    marginVertical: 8,
-    borderRadius: 10,
-    elevation: 3,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    elevation: 4,
   },
-  text: {
-    fontSize: 16,
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  label: {
+    marginLeft: 8,
+    fontWeight: '600',
+    fontSize: 15,
     color: '#333',
-    marginBottom: 4,
+    width: 80,
+  },
+  value: {
+    fontSize: 15,
+    color: '#555',
+    flexShrink: 1,
+  },
+  noDataContainer: {
+    flex: 1,
+    alignItems: 'center',
+    marginTop: 100,
   },
   noDataText: {
-    marginTop: 50,
-    textAlign: 'center',
+    marginTop: 10,
     fontSize: 18,
     color: '#888',
   },
