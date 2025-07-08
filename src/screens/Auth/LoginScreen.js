@@ -6,6 +6,9 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
+  StyleSheet,
+  Modal,
 } from 'react-native';
 import styles from '../../styles/Auth/LoginScreen.styles';
 import { useNavigation } from '@react-navigation/native';
@@ -25,11 +28,15 @@ const LoginScreen = () => {
     onConfirm: null,
   });
 
+  const [loading, setLoading] = useState(false); // <-- state for full-screen loader
+
   const handleLogin = async () => {
     if (!username || !password) {
       showModal('Validation Error', 'Please enter both username and password.');
       return;
     }
+
+    setLoading(true); // show loader
 
     try {
       const payload = {
@@ -46,7 +53,7 @@ const LoginScreen = () => {
       ) {
         const { token, fName, lName, email, userId } = response.data;
 
-        await AsyncStorage.setItem('authToken', token);
+        await AsyncStorage.setItem('token', token);
         await AsyncStorage.setItem('userId', userId.toString());
         await AsyncStorage.setItem('customerFullName', `${fName} ${lName}`);
         await AsyncStorage.setItem('email', email);
@@ -64,6 +71,8 @@ const LoginScreen = () => {
       const message =
         error?.response?.data?.errorMessages || 'Server error. Please try again.';
       showModal('Login Error', message);
+    } finally {
+      setLoading(false); // hide loader
     }
   };
 
@@ -123,6 +132,14 @@ const LoginScreen = () => {
         </View>
       </ScrollView>
 
+      {/* Full Screen Loader */}
+      <Modal visible={loading} transparent animationType="fade">
+        <View style={loaderStyles.overlay}>
+          <ActivityIndicator size="large" color="#ffffff" />
+          <Text style={loaderStyles.text}>Logging in...</Text>
+        </View>
+      </Modal>
+
       <CustomAlertModal
         visible={modalVisible}
         title={modalContent.title}
@@ -133,5 +150,19 @@ const LoginScreen = () => {
     </SafeAreaView>
   );
 };
+
+const loaderStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    color: '#fff',
+    marginTop: 10,
+    fontSize: 16,
+  },
+});
 
 export default LoginScreen;

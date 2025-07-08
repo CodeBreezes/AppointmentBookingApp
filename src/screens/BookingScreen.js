@@ -1,31 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View, Text, TouchableOpacity, ScrollView, Modal,
-  FlatList, Alert, Platform, SafeAreaView
+  View, Text, TextInput, TouchableOpacity, ScrollView, Modal,
+  FlatList, Alert, Platform, ActivityIndicator, KeyboardAvoidingView
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { postBooking } from '../api/bookingApi';
 import axios from 'axios';
 import MainLayout from '../components/MainLayout';
 import styles from '../styles/BookingScreen.styles';
+import { postBooking } from '../api/bookingApi';
 
 const BookingScreen = () => {
   const [name, setName] = useState('');
   const [userId, setUserId] = useState(null);
   const [services, setServices] = useState([]);
   const [serviceId, setServiceId] = useState('');
+  const [topic, setTopic] = useState('');
+  const [notes, setNotes] = useState('');
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [serviceModalVisible, setServiceModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const serviceApiUrl = 'http://appointment.bitprosofttech.com/api/Services';
 
   useEffect(() => {
-    axios
-      .get(serviceApiUrl)
+    axios.get(serviceApiUrl)
       .then((response) => setServices(response.data.slice(0, 4)))
       .catch(() => Alert.alert('Error', 'Unable to load services'));
 
@@ -40,118 +42,176 @@ const BookingScreen = () => {
   }, []);
 
   const handleBooking = async () => {
-    if (!serviceId || !userId) {
-      Alert.alert('Error', 'Please select a service and ensure you are logged in.');
+    if (!serviceId || !userId || !topic.trim()) {
+      Alert.alert('Error', 'Please fill in all required fields.');
       return;
     }
 
     const startedDate = date.toISOString().split('T')[0];
-    const startedTime = time.toTimeString().split(' ')[0];
+    const startedTime =
+      time.toTimeString().split(' ')[0] + '.' + String(time.getMilliseconds()).padStart(3, '0');
 
     const payload = {
-      serviceId: serviceId,
+      serviceId,
       userId: parseInt(userId),
-      startedDate: startedDate,
-      startedTime: startedTime,
+      startedDate,
+      startedTime,
+      topic,
+      notes,
     };
 
     try {
+      setLoading(true);
       await postBooking(payload);
       Alert.alert('Success', 'Booking submitted successfully!');
+      setTopic('');
+      setNotes('');
     } catch (error) {
       Alert.alert('Error', 'Booking failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <MainLayout title="Book Appointment">
-      <ScrollView contentContainerStyle={styles.pageContainer}>
-        <View style={styles.card}>
-          <Text style={styles.label}>Welcome, {name}</Text>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={100}
+      >
+        <ScrollView contentContainerStyle={styles.pageContainer} keyboardShouldPersistTaps="handled">
+          <View style={styles.card}>
+            <Text style={styles.label}>Welcome, {name}</Text>
 
-          <Text style={styles.label}>Select Service</Text>
-          <TouchableOpacity
-            style={styles.dropdownTouchable}
-            onPress={() => setServiceModalVisible(true)}
-          >
-            <Text style={styles.dropdownText}>
-              {serviceId
-                ? `${services.find((s) => s.uniqueId === serviceId)?.name} - ₹${services.find((s) => s.uniqueId === serviceId)?.cost}`
-                : 'Choose a service'}
-            </Text>
-          </TouchableOpacity>
+            {/* Service Picker */}
+            <Text style={styles.label}>Select Service</Text>
+            <TouchableOpacity
+              style={styles.dropdownTouchable}
+              onPress={() => setServiceModalVisible(true)}
+            >
+              <Text style={styles.dropdownText}>
+                {serviceId
+                  ? `${services.find(s => s.uniqueId === serviceId)?.name} - ₹${services.find(s => s.uniqueId === serviceId)?.cost}`
+                  : 'Choose a service'}
+              </Text>
+            </TouchableOpacity>
 
-          {/* Service Modal */}
-          <Modal visible={serviceModalVisible} animationType="slide" transparent>
-            <View style={styles.modalOverlay}>
-              <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>Select a Service</Text>
-                <FlatList
-                  data={services}
-                  keyExtractor={(item) => item.uniqueId.toString()}
-                  renderItem={({ item }) => (
-                    <TouchableOpacity
-                      style={styles.serviceCard}
-                      onPress={() => {
-                        setServiceId(item.uniqueId);
-                        setServiceModalVisible(false);
-                      }}
-                    >
-                      <View style={styles.serviceRow}>
-                        <Text style={styles.serviceName}>{item.name}</Text>
-                        <Text style={styles.serviceCost}>₹{item.cost}</Text>
-                      </View>
-                      <Text style={styles.serviceDescription}>{item.description}</Text>
-                    </TouchableOpacity>
-                  )}
-                />
-                <TouchableOpacity style={styles.modalClose} onPress={() => setServiceModalVisible(false)}>
-                  <Text style={styles.modalCloseText}>Close</Text>
+            {/* Modal */}
+            <Modal visible={serviceModalVisible} animationType="slide" transparent>
+              <View style={styles.modalOverlay}>
+                <View style={styles.modalContent}>
+                  <Text style={styles.modalTitle}>Select a Service</Text>
+                  <FlatList
+                    data={services}
+                    keyExtractor={(item) => item.uniqueId.toString()}
+                    renderItem={({ item }) => (
+                      <TouchableOpacity
+                        style={styles.serviceCard}
+                        onPress={() => {
+                          setServiceId(item.uniqueId);
+                          setServiceModalVisible(false);
+                        }}
+                      >
+                        <View style={styles.serviceRow}>
+                          <Text style={styles.serviceName}>{item.name}</Text>
+                          <Text style={styles.serviceCost}>₹{item.cost}</Text>
+                        </View>
+                        <Text style={styles.serviceDescription}>{item.description}</Text>
+                      </TouchableOpacity>
+                    )}
+                  />
+                  <TouchableOpacity style={styles.modalClose} onPress={() => setServiceModalVisible(false)}>
+                    <Text style={styles.modalCloseText}>Close</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
+
+            {/* Topic & Notes */}
+            <Text style={styles.label}>Enter the Topic of the booking</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter topic"
+              value={topic}
+              onChangeText={setTopic}
+            />
+
+            <Text style={styles.label}>Additional Notes (mandatory)</Text>
+            <TextInput
+              style={[styles.input, { height: 100, textAlignVertical: 'top' }]}
+              placeholder="Additional notes..."
+              value={notes}
+              onChangeText={setNotes}
+              multiline
+              numberOfLines={4}
+            />
+
+            {/* Date & Time */}
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 10 }}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.label}>Date</Text>
+                <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.dateButton}>
+                  <Text style={styles.dateButtonText}>
+                    {date ? `📆 ${date.toDateString()}` : 'Select Date'}
+                  </Text>
                 </TouchableOpacity>
+                {showDatePicker && (
+                  <DateTimePicker
+                    value={date}
+                    mode="date"
+                    minimumDate={new Date()}
+                    display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                    onChange={(event, selectedDate) => {
+                      setShowDatePicker(false);
+                      if (selectedDate) setDate(selectedDate);
+                    }}
+                  />
+                )}
+              </View>
+
+              <View style={{ flex: 1 }}>
+                <Text style={styles.label}>Time</Text>
+                <TouchableOpacity onPress={() => setShowTimePicker(true)} style={styles.dateButton}>
+                  <Text style={styles.dateButtonText}>
+                    {time ? `🕒 ${time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Select Time'}
+                  </Text>
+                </TouchableOpacity>
+                {showTimePicker && (
+                  <DateTimePicker
+                    value={time}
+                    mode="time"
+                    display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                    onChange={(event, selectedTime) => {
+                      setShowTimePicker(false);
+                      if (selectedTime) setTime(selectedTime);
+                    }}
+                  />
+                )}
               </View>
             </View>
-          </Modal>
 
-          <Text style={styles.label}>Select Date</Text>
-          <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.dateButton}>
-            <Text style={styles.dateButtonText}>📆 {date.toDateString()}</Text>
-          </TouchableOpacity>
-          {showDatePicker && (
-            <DateTimePicker
-              value={date}
-              mode="date"
-              minimumDate={new Date()}
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-              onChange={(event, selectedDate) => {
-                setShowDatePicker(false);
-                if (selectedDate) setDate(selectedDate);
-              }}
-            />
-          )}
+            {/* Submit Button */}
+            <TouchableOpacity style={styles.bookButton} onPress={handleBooking} disabled={loading}>
+              {loading ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text style={styles.bookButtonText}>Confirm Booking</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
-          <Text style={styles.label}>Select Time</Text>
-          <TouchableOpacity onPress={() => setShowTimePicker(true)} style={styles.dateButton}>
-            <Text style={styles.dateButtonText}>
-              🕒 {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            </Text>
-          </TouchableOpacity>
-          {showTimePicker && (
-            <DateTimePicker
-              value={time}
-              mode="time"
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-              onChange={(event, selectedTime) => {
-                setShowTimePicker(false);
-                if (selectedTime) setTime(selectedTime);
-              }}
-            />
-          )}
-
-          <TouchableOpacity style={styles.bookButton} onPress={handleBooking}>
-            <Text style={styles.bookButtonText}>Confirm Booking</Text>
-          </TouchableOpacity>
+      {/* Fullscreen Loader */}
+      {loading && (
+        <View style={{
+          position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.3)', justifyContent: 'center', alignItems: 'center'
+        }}>
+          <ActivityIndicator size="large" color="#fff" />
         </View>
-      </ScrollView>
+      )}
     </MainLayout>
   );
 };

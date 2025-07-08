@@ -9,16 +9,16 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  SafeAreaView,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { launchImageLibrary } from 'react-native-image-picker';
 import styles from '../../styles/Auth/ProfileScreen.styles';
 import { registerUser } from '../../api/userApi';
-import { loginUser } from '../../api/loginApi'; // ✅ Correct login import
+import { loginUser } from '../../api/loginApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import CustomAlertModal from '../../components/CustomAlertModal';
-import MainLayout from '../../components/MainLayout';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -93,8 +93,7 @@ const ProfileScreen = () => {
       const response = await registerUser(payload);
 
       if (response.status === 200 || response.status === 201) {
-        // ✅ Auto-login after successful signup
-        const loginPayload = { loginName: email, password };
+        const loginPayload = { loginName: phoneNumber, password };
         const loginResponse = await loginUser(loginPayload);
 
         if (
@@ -131,62 +130,80 @@ const ProfileScreen = () => {
   };
 
   return (
-    <MainLayout title="Signup">
+    <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="light-content" backgroundColor="#6A5ACD" />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
         keyboardVerticalOffset={100}
       >
-        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-          <View style={styles.header}>
-            <TouchableOpacity style={styles.profileImageContainer} onPress={handleImageUpload}>
-              {profileImageUri ? (
-                <Image source={{ uri: profileImageUri }} style={styles.profileImage} />
-              ) : (
-                <AntDesign name="user" size={60} color="white" />
-              )}
-            </TouchableOpacity>
-            <Text style={styles.profilePictureText}>Profile Picture</Text>
-            <Text style={styles.uploadImageText}>Upload a personal image</Text>
-          </View>
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.profileImageContainer} onPress={handleImageUpload}>
+            {profileImageUri ? (
+              <Image source={{ uri: profileImageUri }} style={styles.profileImage} />
+            ) : (
+              <AntDesign name="user" size={60} color="white" />
+            )}
+          </TouchableOpacity>
+          <Text style={styles.profilePictureText}>Profile Picture</Text>
+          <Text style={styles.uploadImageText}>Upload a personal image</Text>
+        </View>
 
-          <View style={styles.formContainer}>
-            <TextInput style={styles.input} placeholder="First Name" value={firstName} onChangeText={setFirstName} />
-            <TextInput style={styles.input} placeholder="Last Name" value={lastLame} onChangeText={setLastLame} />
-            <TextInput
-              style={styles.input}
-              placeholder="Phone Number"
-              value={phoneNumber}
-              onChangeText={setPhoneNumber}
-              keyboardType="phone-pad"
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              secureTextEntry
-            />
+        <ScrollView
+          contentContainerStyle={styles.formContainer}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <TextInput
+            style={styles.input}
+            placeholder="First Name"
+            placeholderTextColor="#999"
+            value={firstName}
+            onChangeText={setFirstName}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Last Name"
+            placeholderTextColor="#999"
+            value={lastLame}
+            onChangeText={setLastLame}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Phone Number"
+            placeholderTextColor="#999"
+            value={phoneNumber}
+            onChangeText={setPhoneNumber}
+            keyboardType="phone-pad"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor="#999"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor="#999"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Confirm Password"
+            placeholderTextColor="#999"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
+          />
 
-            <TouchableOpacity style={styles.signUpButton} onPress={handleSubmit}>
-              <Text style={styles.signUpButtonText}>Sign Up</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity style={styles.signUpButton} onPress={handleSubmit}>
+            <Text style={styles.signUpButtonText}>Sign Up</Text>
+          </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
 
@@ -198,7 +215,7 @@ const ProfileScreen = () => {
         onClose={() => setModalVisible(false)}
         onConfirm={modalContent.onConfirm}
       />
-    </MainLayout>
+    </SafeAreaView>
   );
 };
 
