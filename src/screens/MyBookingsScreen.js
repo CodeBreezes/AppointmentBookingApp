@@ -14,10 +14,10 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const SERVICE_NAMES = {
-  1: 'Oil Change',
-  2: 'Tire Replacement',
-  3: 'Car Wash',
-  4: 'Engine Check',
+  1: '1 to 1 Live Counseling Session',
+  2: 'Share Your Story',
+  3: 'Book a Talk',
+  4: 'Brand Collaborations',
 };
 
 const MyBookingsScreen = () => {

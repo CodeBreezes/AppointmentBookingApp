@@ -55,8 +55,8 @@ const MainLayout = ({ title, children }) => {
 
             <ScrollView style={styles.menuContainer}>
               <DrawerItem label="🏠 Dashboard" onPress={() => navigateTo('Dashboard')} />
+              <DrawerItem label="📋 Book Appointment" onPress={() => navigateTo('BookingScreen')} />
               <DrawerItem label="📝 My Bookings" onPress={() => navigateTo('MyBookings')} />
-              <DrawerItem label="📋 Booking" onPress={() => navigateTo('BookingScreen')} />
               <DrawerItem label="👤 Profile" onPress={() => navigateTo('Profile')} />
               <DrawerItem label="🚪 Logout" onPress={() => {/* add logout logic */}} />
             </ScrollView>
