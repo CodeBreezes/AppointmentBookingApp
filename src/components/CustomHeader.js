@@ -1,15 +1,19 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 
-const CustomHeader = ({ title, onMenuPress }) => {
+const CustomHeader = ({ title, onMenuPress, hideMenu }) => {
   return (
     <View style={styles.headerContainer}>
-      <TouchableOpacity onPress={onMenuPress}>
-        <Image
-          source={require('../assets/menu.png')} // Make sure this image exists
-          style={styles.menuIcon}
-        />
-      </TouchableOpacity>
+      {hideMenu ? (
+        <View style={{ width: 25 }} /> // keep space aligned if menu is hidden
+      ) : (
+        <TouchableOpacity onPress={onMenuPress}>
+          <Image
+            source={require('../assets/menu.png')}
+            style={styles.menuIcon}
+          />
+        </TouchableOpacity>
+      )}
       <Text style={styles.headerTitle}>{title}</Text>
       <View style={{ width: 25 }} />
     </View>

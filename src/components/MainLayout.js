@@ -50,14 +50,15 @@ const MainLayout = ({ title, children }) => {
             <View style={styles.profileContainer}>
               <Image source={require('../assets/rashid.png')} style={styles.avatar} />
               <Text style={styles.name}>{fullName}</Text>
-              <Text style={styles.subtitle}>70 Events</Text>
+              <Text style={styles.subtitle}>Customer</Text>
             </View>
 
             <ScrollView style={styles.menuContainer}>
               <DrawerItem label="🏠 Dashboard" onPress={() => navigateTo('Dashboard')} />
+              <DrawerItem label="🏠   Home" onPress={() => navigateTo('Home')} />
               <DrawerItem label="📋 Book Appointment" onPress={() => navigateTo('BookingScreen')} />
               <DrawerItem label="📝 My Bookings" onPress={() => navigateTo('MyBookings')} />
-              <DrawerItem label="👤 Profile" onPress={() => navigateTo('Profile')} />
+              <DrawerItem label="👤 Change Password" onPress={() => navigateTo('Dashboard')} />
               <DrawerItem label="🚪 Logout" onPress={() => {/* add logout logic */}} />
             </ScrollView>
           </View>

@@ -90,7 +90,7 @@ const LoginScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <CustomHeader title="Log In" />
+      <CustomHeader title="Log In" hideMenu />
 
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
