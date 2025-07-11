@@ -9,6 +9,7 @@ import axios from 'axios';
 import MainLayout from '../components/MainLayout';
 import styles from '../styles/BookingScreen.styles';
 import { postBooking } from '../api/bookingApi';
+import Icon from 'react-native-vector-icons/Feather';
 
 const BookingScreen = () => {
   const [name, setName] = useState('');
@@ -22,9 +23,91 @@ const BookingScreen = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [serviceModalVisible, setServiceModalVisible] = useState(false);
+  const [descriptionModalVisible, setDescriptionModalVisible] = useState(false);
+  const [selectedServiceDescription, setSelectedServiceDescription] = useState('');
   const [loading, setLoading] = useState(false);
 
   const serviceApiUrl = 'http://appointment.bitprosofttech.com/api/Services';
+
+  const serviceDescriptions = {
+    1: `📌 1-to-1 Live Counseling Session
+
+Find clarity, direction, and personal growth through private video sessions with Rashid.
+
+🔹 Topics Covered:
+• Life transitions & cultural identity
+• Relationships & workplace issues
+• Self-development strategies
+
+✅ Benefits:
+✔ Gain perspective on challenges
+✔ Build confidence & actionable plans
+✔ Culturally aware support
+
+🎯 Tags:
+• Deep Dive Session
+• Confidential space via Zoom
+• Holistic life redesign`,
+
+    2: `📌 Share Your Story
+
+Your voice matters. Let Rashid feature your journey — anonymously or credited — across platforms.
+
+🛠️ How It Works:
+• Submit story (credit optional)
+• Professional editing
+• Shared on Instagram, TikTok, Podcast
+
+🎁 Why Share?
+✔ Therapeutic for you
+✔ Inspires others
+✔ Builds your personal platform
+
+🎯 Tags:
+• Video story (Reels)
+• Coaching Bonus (Free 30-min session)
+• Subtitles in Arabic
+• HD video sent post-publishing`,
+
+    3: `📌 Book a Talk
+
+Inspire your audience with Rashid’s real-world stories and bold ideas.
+
+🎤 Available For:
+✔ University lectures
+✔ Corporate events
+✔ Mental health panels
+
+💡 Topics:
+• Storytelling & mindset
+• Self-doubt & creativity
+• Motivation & growth
+
+🎯 Tags:
+• Custom speech
+• Pre-event consultation
+• Post-event networking
+• Impactful delivery`,
+
+    4: `📌 Brand Collaborations
+
+Partner with Rashid to craft authentic, viral, creative content.
+
+📣 Ideal For:
+✔ Lifestyle & wellness brands
+✔ Events, launches & cafés
+✔ Tech, fashion, NGOs
+
+🚀 Includes:
+• Reels, reviews, storytelling
+• Cross-promotion
+• Affiliate/revenue share
+
+🎯 Tags:
+• Co-branded content
+• Performance report
+• Authentic, value-driven content`
+  };
 
   useEffect(() => {
     axios.get(serviceApiUrl)
@@ -48,8 +131,7 @@ const BookingScreen = () => {
     }
 
     const startedDate = date.toISOString().split('T')[0];
-    const startedTime =
-      time.toTimeString().split(' ')[0] + '.' + String(time.getMilliseconds()).padStart(3, '0');
+    const startedTime = time.toTimeString().split(' ')[0] + '.' + String(time.getMilliseconds()).padStart(3, '0');
 
     const payload = {
       serviceId,
@@ -97,7 +179,7 @@ const BookingScreen = () => {
               </Text>
             </TouchableOpacity>
 
-            {/* Modal */}
+            {/* Service Selection Modal */}
             <Modal visible={serviceModalVisible} animationType="slide" transparent>
               <View style={styles.modalOverlay}>
                 <View style={styles.modalContent}>
@@ -116,8 +198,15 @@ const BookingScreen = () => {
                         <View style={styles.serviceRow}>
                           <Text style={styles.serviceName}>{item.name}</Text>
                           <Text style={styles.serviceCost}>₹{item.cost}</Text>
+                          <TouchableOpacity
+                            onPress={() => {
+                              setSelectedServiceDescription(serviceDescriptions[item.uniqueId]);
+                              setDescriptionModalVisible(true);
+                            }}
+                          >
+                            <Icon name="eye" size={20} color="#7442ff" />
+                          </TouchableOpacity>
                         </View>
-                        <Text style={styles.serviceDescription}>{item.description}</Text>
                       </TouchableOpacity>
                     )}
                   />
@@ -128,8 +217,28 @@ const BookingScreen = () => {
               </View>
             </Modal>
 
+            {/* Description Modal */}
+            <Modal visible={descriptionModalVisible} animationType="slide" transparent>
+              <View style={styles.modalOverlay}>
+                <View style={[styles.modalContent, { maxHeight: '85%' }]}>
+                  <Text style={styles.modalTitle}>Service Description</Text>
+                  <ScrollView style={{ marginBottom: 20 }} showsVerticalScrollIndicator>
+                    <Text style={styles.descriptionText}>
+                      {selectedServiceDescription}
+                    </Text>
+                  </ScrollView>
+                  <TouchableOpacity
+                    style={styles.modalClose}
+                    onPress={() => setDescriptionModalVisible(false)}
+                  >
+                    <Text style={styles.modalCloseText}>Close</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
+
             {/* Topic & Notes */}
-            <Text style={styles.label}>Enter the Topic of the booking</Text>
+            <Text style={styles.label}>Enter Topic</Text>
             <TextInput
               style={styles.input}
               placeholder="Enter topic"
@@ -137,7 +246,7 @@ const BookingScreen = () => {
               onChangeText={setTopic}
             />
 
-            <Text style={styles.label}>Additional Notes (mandatory)</Text>
+            <Text style={styles.label}>Additional Notes</Text>
             <TextInput
               style={[styles.input, { height: 100, textAlignVertical: 'top' }]}
               placeholder="Additional notes..."
@@ -203,7 +312,7 @@ const BookingScreen = () => {
         </ScrollView>
       </KeyboardAvoidingView>
 
-      {/* Fullscreen Loader */}
+      {/* Loader Overlay */}
       {loading && (
         <View style={{
           position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
