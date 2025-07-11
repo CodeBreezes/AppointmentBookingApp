@@ -166,7 +166,6 @@ Partner with Rashid to craft authentic, viral, creative content.
           <View style={styles.card}>
             <Text style={styles.label}>Welcome, {name}</Text>
 
-            {/* Service Picker */}
             <Text style={styles.label}>Select Service</Text>
             <TouchableOpacity
               style={styles.dropdownTouchable}
@@ -179,7 +178,6 @@ Partner with Rashid to craft authentic, viral, creative content.
               </Text>
             </TouchableOpacity>
 
-            {/* Service Selection Modal */}
             <Modal visible={serviceModalVisible} animationType="slide" transparent>
               <View style={styles.modalOverlay}>
                 <View style={styles.modalContent}>
@@ -198,18 +196,22 @@ Partner with Rashid to craft authentic, viral, creative content.
                         <View style={styles.serviceRow}>
                           <Text style={styles.serviceName}>{item.name}</Text>
                           <Text style={styles.serviceCost}>₹{item.cost}</Text>
+                        </View>
+                        <View style={styles.eyeButtonContainer}>
                           <TouchableOpacity
+                            style={styles.detailsButton}
                             onPress={() => {
                               setSelectedServiceDescription(serviceDescriptions[item.uniqueId]);
                               setDescriptionModalVisible(true);
                             }}
                           >
-                            <Icon name="eye" size={20} color="#7442ff" />
+                            <Text style={styles.detailsButtonText}>View Details</Text>
                           </TouchableOpacity>
                         </View>
                       </TouchableOpacity>
                     )}
                   />
+
                   <TouchableOpacity style={styles.modalClose} onPress={() => setServiceModalVisible(false)}>
                     <Text style={styles.modalCloseText}>Close</Text>
                   </TouchableOpacity>
@@ -217,7 +219,6 @@ Partner with Rashid to craft authentic, viral, creative content.
               </View>
             </Modal>
 
-            {/* Description Modal */}
             <Modal visible={descriptionModalVisible} animationType="slide" transparent>
               <View style={styles.modalOverlay}>
                 <View style={[styles.modalContent, { maxHeight: '85%' }]}>
@@ -237,7 +238,6 @@ Partner with Rashid to craft authentic, viral, creative content.
               </View>
             </Modal>
 
-            {/* Topic & Notes */}
             <Text style={styles.label}>Enter Topic</Text>
             <TextInput
               style={styles.input}
@@ -256,7 +256,6 @@ Partner with Rashid to craft authentic, viral, creative content.
               numberOfLines={4}
             />
 
-            {/* Date & Time */}
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 10 }}>
               <View style={{ flex: 1 }}>
                 <Text style={styles.label}>Date</Text>
@@ -300,7 +299,6 @@ Partner with Rashid to craft authentic, viral, creative content.
               </View>
             </View>
 
-            {/* Submit Button */}
             <TouchableOpacity style={styles.bookButton} onPress={handleBooking} disabled={loading}>
               {loading ? (
                 <ActivityIndicator size="small" color="#fff" />
@@ -312,7 +310,6 @@ Partner with Rashid to craft authentic, viral, creative content.
         </ScrollView>
       </KeyboardAvoidingView>
 
-      {/* Loader Overlay */}
       {loading && (
         <View style={{
           position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
